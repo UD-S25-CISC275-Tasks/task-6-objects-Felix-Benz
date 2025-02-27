@@ -11,9 +11,9 @@ export function makeBlankQuestion(
     type: QuestionType,
 ): Question {
     return {
-        id: id,
-        name: name,
-        type: type,
+        id,
+        name,
+        type,
         body: "",
         expected: "",
         options: [],
@@ -97,7 +97,11 @@ export function toMarkdown(question: Question): string {
  * `newName`.
  */
 export function renameQuestion(question: Question, newName: string): Question {
-    let newQuestion: Question = { ...question, name: newName };
+    let newQuestion: Question = {
+        ...question,
+        name: newName,
+        options: [...question.options],
+    };
     return newQuestion;
 }
 
@@ -110,6 +114,7 @@ export function publishQuestion(question: Question): Question {
     let publishInverted: Question = {
         ...question,
         published: !question.published,
+        options: [...question.options],
     };
     return publishInverted;
 }
@@ -121,7 +126,14 @@ export function publishQuestion(question: Question): Question {
  * The `published` field should be reset to false.
  */
 export function duplicateQuestion(id: number, oldQuestion: Question): Question {
-    return oldQuestion;
+    let duplicate: Question = {
+        ...oldQuestion,
+        name: "Copy of " + oldQuestion.name,
+        published: false,
+        id: id,
+        options: [...oldQuestion.options],
+    };
+    return duplicate;
 }
 
 /**
@@ -132,7 +144,11 @@ export function duplicateQuestion(id: number, oldQuestion: Question): Question {
  * Check out the subsection about "Nested Fields" for more information.
  */
 export function addOption(question: Question, newOption: string): Question {
-    return question;
+    let newQuestion: Question = {
+        ...question,
+        options: [...question.options, newOption],
+    };
+    return newQuestion;
 }
 
 /**
@@ -149,5 +165,15 @@ export function mergeQuestion(
     contentQuestion: Question,
     { points }: { points: number },
 ): Question {
-    return contentQuestion;
+    let newQuestion: Question = {
+        id,
+        name,
+        type: contentQuestion.type,
+        body: contentQuestion.body,
+        options: [...contentQuestion.options],
+        expected: contentQuestion.expected,
+        published: false,
+        points: points,
+    };
+    return newQuestion;
 }
